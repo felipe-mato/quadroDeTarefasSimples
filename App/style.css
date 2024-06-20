@@ -81,6 +81,10 @@ header > h1 {
   transition: box-shadow 0.3s ease; 
 }
 
+.card:focus:hover {
+  cursor: text;
+}
+
 .card {
   position: relative;
   padding: 12px 14px;
