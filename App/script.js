@@ -2,6 +2,8 @@
 const columnsTitles = document.querySelectorAll(".column__title");
 const columns = document.querySelectorAll(".column__cards");
 const cards = document.querySelectorAll(".card");
+const delBtns = document.querySelectorAll(".delBtn");
+const buttonContainers = document.querySelectorAll(".button-container");
 let draggedCard;
 
 ///////////// Métodos ////////////////
@@ -10,8 +12,25 @@ const handleDragStart = (e) => {
   e.dataTransfer.effectAllowed = "move";
 };
 
+const handleDeleteDrop = ({ target }) => {
+  if (target.classList.contains("delBtn")) {
+    draggedCard.remove();
+    target.classList.remove("delBtn__highlight");
+  }
+}
+
 const handleDragOver = (e) => {
   e.preventDefault();
+};
+
+const handleDragEnterDlt = ({ target }) => {
+  if (target.classList.contains("delBtn")) {
+    target.classList.add("delBtn__highlight");
+  }
+}
+
+const handleDragLeaveDlt = ({ target }) => {
+  target.classList.remove("delBtn__highlight");
 };
 
 const handleDragEnter = ({ target }) => {
@@ -36,6 +55,45 @@ const handleKeyPress = (e) => {
     e.preventDefault();
     e.target.blur();
   }
+};
+
+const criaCard1 = () => {
+  createCard1(columns[0]);
+}
+
+const createCard1 = (column) => {
+  column = columns[0]
+
+  const card = document.createElement("input");
+  const placeholder = document.createElement("div");
+
+  card.className = "card";
+  card.draggable = "true";
+  card.contentEditable = "true";
+  card.placeholder = "Nova tarefa...";
+  placeholder.textContent = "Nova tarefa...";
+
+  card.appendChild(placeholder);
+
+  card.addEventListener("focus", () => {
+    placeholder.style.display = "none";
+  });
+
+  card.addEventListener("focusout", () => {
+    if (!card.textContent.trim()) {
+      card.remove();
+    } else {
+      placeholder.style.display = card.textContent.trim() ? "none" : "block";
+    }
+    card.contentEditable = "false";
+  });
+
+  card.addEventListener("keypress", handleKeyPress);
+  card.addEventListener("dblclick", () => editCard(card));
+  card.addEventListener("dragstart", handleDragStart);
+
+  column.append(card);
+  card.focus();
 };
 
 const createCard = ({ target }) => {
@@ -71,6 +129,7 @@ const createCard = ({ target }) => {
 
   target.append(card);
   card.focus();
+  console.log(target);
 };
 
 const editCard = (card) => {
@@ -122,3 +181,11 @@ cards.forEach((card) => {
 columnsTitles.forEach((title) => {
   title.addEventListener("dblclick", editTitle);
 });
+
+delBtns.forEach((btn) => {
+  btn.addEventListener("drop", handleDeleteDrop);
+  btn.addEventListener("dragenter", handleDragEnterDlt);
+  btn.addEventListener("dragleave",handleDragLeaveDlt)
+});
+
+
